@@ -1,53 +1,35 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
+
 import "./App.css";
+import ProjectList from "./components/ProjectList";
 
-function App() {
-  const [data, setData] = useState("");
-  const [isTrue, setIsTrue] = useState(false);
+class App extends Component {
+  constructor() {
+    super();
 
-  const onClick = () => {
-    fetch("https://jfb-portfolio-api.herokuapp.com/projects")
+    this.state = {
+      data: [],
+      isLoaded: false,
+    };
+  }
+
+  componentDidMount() {
+    fetch(`https://jfb-portfolio-api.herokuapp.com/projects`)
       .then((res) => res.json())
       .then((response) => {
-        setData(response.data[0]);
-        console.log(response.data[0]);
-        setIsTrue(true);
+        this.setState({ data: response.data, isLoaded: true });
       });
-  };
-  return (
-    <div className="App">
-      <h1>Hello World</h1>
-      <button onClick={onClick}>Click Me</button>
-
-      {isTrue ? (
-        <div>
-          <h2>{data.title}</h2>
-          <p>{data.description}</p>
-          <img src={data.img_url} alt={data.title} />
-          <a href={data.repo} target="_blank" rel="noreferrer">
-            Source Code
-          </a>
-          <a href={data.demo} target="_blank" rel="noreferrer">
-            Demo
-          </a>
+  }
+  render() {
+    return (
+      <div className="App">
+        <h1>Jeremy Black | JavaScript Developer</h1>
+        <div className="project-div">
+          <ProjectList data={this.state.data} isLoaded={this.state.isLoaded} />
         </div>
-      ) : (
-        <p>Press the button.</p>
-      )}
-
-      {/* <div>
-        <h2>{data.title}</h2>
-        <p>{data.description}</p>
-        <img src={data.img_url} alt={data.title} />
-        <a href={data.repo} target="_blank" rel="noreferrer">
-          Source Code
-        </a>
-        <a href={data.demo} target="_blank" rel="noreferrer">
-          Demo
-        </a>
-      </div> */}
-    </div>
-  );
+      </div>
+    );
+  }
 }
 
 export default App;
